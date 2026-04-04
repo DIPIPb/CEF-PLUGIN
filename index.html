@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XXL Clan — Набор</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0a0a0a;
+      --bg2:      #141414;
+      --border:   #2a2a2a;
+      --red:      #cc1111;
+      --red-dark: #991010;
+      --white:    #f0f0f0;
+      --gray:     #888;
+      --gray2:    #555;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── Layout ── */
+    .wrap {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 48px 20px 60px;
+    }
+
+    /* ── Header ── */
+    .header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .header-icon {
+      width: 56px; height: 56px;
+      border: 2px solid var(--red);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      background: rgba(204,17,17,.08);
+    }
+    .header-icon svg { width: 26px; height: 26px; fill: none; stroke: var(--red); stroke-width: 2; }
+    .clan-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 72px;
+      font-weight: 700;
+      color: var(--red);
+      letter-spacing: .1em;
+      line-height: 1;
+    }
+    .clan-sub {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .clan-sub span {
+      font-size: 11px;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--gray);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+    }
+    .clan-sub::before, .clan-sub::after {
+      content: '';
+      width: 50px; height: 1px;
+      background: var(--red);
+      opacity: .4;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .card.red-border { border-color: rgba(204,17,17,.4); }
+
+    /* ── Section title ── */
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 18px;
+    }
+    .card-title svg { width: 16px; height: 16px; fill: none; stroke: var(--red); stroke-width: 2; flex-shrink: 0; }
+
+    /* ── Requirements list ── */
+    .req-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .req-list li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--gray);
+    }
+    .req-list li::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--red);
+      flex-shrink: 0;
+    }
+    .req-list li b { color: var(--white); }
+
+    /* ── Form ── */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .form-group:last-of-type { margin-bottom: 0; }
+    label {
+      font-size: 12px;
+      color: var(--gray);
+      letter-spacing: .02em;
+    }
+    label span { color: var(--gray2); }
+    input, select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      padding: 10px 12px;
+      width: 100%;
+      outline: none;
+      transition: border-color .15s;
+      -webkit-appearance: none;
+    }
+    input:focus, select:focus { border-color: var(--red); }
+    input::placeholder { color: var(--gray2); }
+    select option { background: #1a1a1a; }
+
+    /* ── Errors ── */
+    .err {
+      font-size: 11px;
+      color: #e05555;
+      display: none;
+      margin-top: 3px;
+    }
+    .form-group.has-error input,
+    .form-group.has-error select { border-color: #cc4444; }
+    .form-group.has-error .err { display: block; }
+
+    /* ── Button ── */
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 4px;
+      background: var(--red);
+      color: #fff;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background .15s, opacity .15s;
+    }
+    .btn:hover { background: var(--red-dark); }
+    .btn:disabled { opacity: .55; cursor: not-allowed; }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--gray);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 4px;
+      padding: 10px 24px;
+      transition: border-color .15s, color .15s;
+    }
+    .btn-outline:hover { border-color: var(--red); color: var(--white); }
+
+    /* ── Global toast ── */
+    #toast {
+      position: fixed;
+      bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1a1a1a;
+      border: 1px solid #cc4444;
+      color: #e05555;
+      font-size: 13px;
+      padding: 12px 20px;
+      border-radius: 6px;
+      transition: transform .25s;
+      z-index: 100;
+      white-space: nowrap;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── Success / Already ── */
+    .center-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .center-card { text-align: center; max-width: 400px; }
+    .center-icon {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .center-icon.green { border: 2px solid rgba(34,197,94,.4); background: rgba(34,197,94,.07); }
+    .center-icon.red   { border: 2px solid rgba(204,17,17,.4); background: rgba(204,17,17,.07); }
+    .center-icon svg { width: 34px; height: 34px; fill: none; stroke-width: 2; }
+    .center-icon.green svg { stroke: #22c55e; }
+    .center-icon.red   svg { stroke: var(--red); }
+    .center-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 44px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 10px;
+    }
+    .center-desc { color: var(--gray); font-size: 15px; margin-bottom: 6px; }
+    .center-hint { color: var(--gray2); font-size: 13px; margin-bottom: 32px; }
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      width: 40px; height: 1px;
+      background: var(--border);
+    }
+    .divider svg { width: 14px; height: 14px; fill: none; stroke: rgba(204,17,17,.4); stroke-width: 2; }
+
+    /* ── Settings ── */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      color: var(--gray);
+      font-size: 13px;
+      cursor: pointer;
+      margin-bottom: 32px;
+      transition: color .15s;
+      padding: 0;
+    }
+    .back-btn:hover { color: var(--white); }
+    .back-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .settings-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .settings-icon {
+      width: 40px; height: 40px;
+      border: 1px solid rgba(204,17,17,.4);
+      border-radius: 50%;
+      background: rgba(204,17,17,.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .settings-icon svg { width: 18px; height: 18px; fill: none; stroke: var(--red); stroke-width: 2; }
+    .settings-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+    .info-box {
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .info-box p { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 10px; }
+    .info-box ol { padding-left: 18px; }
+    .info-box ol li { font-size: 12px; color: var(--gray); margin-bottom: 5px; }
+    .info-box a {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--red);
+      text-decoration: none;
+      margin-top: 8px;
+    }
+    .info-box a:hover { text-decoration: underline; }
+    .info-box a svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .configured-badge {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: rgba(204,17,17,.05);
+      border: 1px solid rgba(204,17,17,.3);
+      border-radius: 4px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+    .configured-badge.show { display: flex; }
+    .configured-badge svg { width: 16px; height: 16px; fill: none; stroke: var(--red); stroke-width: 2; flex-shrink: 0; }
+    .configured-badge strong { color: var(--white); display: block; }
+    .configured-badge code { color: var(--gray); font-size: 11px; font-family: monospace; }
+
+    /* Footer link */
+    .footer-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .footer-link a {
+      font-size: 11px;
+      color: var(--gray2);
+      text-decoration: none;
+      opacity: .5;
+      transition: opacity .15s;
+    }
+    .footer-link a:hover { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <!-- ─── PAGE: FORM ─── -->
+  <div id="page-form" class="page active">
+    <div class="wrap">
+      <div class="header">
+        <div class="header-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="clan-name">XXL</div>
+        <div class="clan-sub"><span>Набор в клан</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Требования
+        </div>
+        <ul class="req-list">
+          <li>Привилегия — не обязательно</li>
+          <li>Возраст — от 14 лет</li>
+          <li>Часы в игре — от 2000</li>
+          <li>Адекватность и дисциплина</li>
+          <li>Умение слушать коллеров</li>
+          <li>Без флуда</li>
+          <li>Ник в Discord: <b>&nbsp;Имя // Ник</b></li>
+        </ul>
+      </div>
+
+      <div class="card red-border">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Анкета для вступления
+        </div>
+
+        <form id="apply-form" novalidate>
+          <div class="form-group" id="fg-privilege">
+            <label>1) Привилегия <span>(если есть)</span></label>
+            <input type="text" id="f-privilege" placeholder="VIP, Premium и т.д.">
+            <span class="err" id="err-privilege"></span>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group" id="fg-age">
+              <label>2) Возраст</label>
+              <input type="number" id="f-age" placeholder="18" min="14">
+              <span class="err" id="err-age"></span>
+            </div>
+            <div class="form-group" id="fg-hours">
+              <label>3) Часов в игре</label>
+              <input type="number" id="f-hours" placeholder="2500" min="2000">
+              <span class="err" id="err-hours"></span>
+            </div>
+          </div>
+
+          <div class="form-group" id="fg-gameNick">
+            <label>4) Ник в игре</label>
+            <input type="text" id="f-gameNick" placeholder="Твой ник в Rust">
+            <span class="err" id="err-gameNick"></span>
+          </div>
+
+          <div class="form-group" id="fg-name">
+            <label>5) Имя</label>
+            <input type="text" id="f-name" placeholder="Твоё имя">
+            <span class="err" id="err-name"></span>
+          </div>
+
+          <div class="form-group" id="fg-role">
+            <label>6) Должность</label>
+            <select id="f-role">
+              <option value="">Выбери должность</option>
+              <option value="фармил">Фармил</option>
+              <option value="комбатёр">Комбатёр</option>
+              <option value="электрик">Электрик</option>
+              <option value="фермер">Фермер</option>
+              <option value="билдер">Билдер</option>
+            </select>
+            <span class="err" id="err-role"></span>
+          </div>
+
+          <div class="form-group" id="fg-discord">
+            <label>7) Discord <span>(Имя // Ник)</span></label>
+            <input type="text" id="f-discord" placeholder="Иван // ivan_rust">
+            <span class="err" id="err-discord"></span>
+          </div>
+
+          <button type="submit" class="btn" id="submit-btn">Подать заявку</button>
+        </form>
+      </div>
+
+      <div class="footer-link"><a href="#" onclick="showPage('page-settings');return false;">Настройки</a></div>
+    </div>
+  </div>
+
+  <!-- ─── PAGE: SUCCESS ─── -->
+  <div id="page-success" class="page">
+    <div class="center-page">
+      <div class="center-card">
+        <div class="center-icon green">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="center-title">Отправлено</div>
+        <p class="center-desc">Твоя анкета отправлена в Discord клана.</p>
+        <p class="center-hint">Ожидай ответа от администрации клана XXL.</p>
+        <div class="divider">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <button class="btn-outline" onclick="showPage('page-form')">На главную</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── PAGE: ALREADY SUBMITTED ─── -->
+  <div id="page-already" class="page">
+    <div class="center-page">
+      <div class="center-card">
+        <div class="center-icon red">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
+        <div class="center-title">Уже подано</div>
+        <p class="center-desc">С вашего IP-адреса уже была подана заявка.</p>
+        <p class="center-hint">Повторная подача невозможна.</p>
+        <div class="divider">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <button class="btn-outline" onclick="showPage('page-form')">На главную</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── PAGE: SETTINGS ─── -->
+  <div id="page-settings" class="page">
+    <div class="wrap">
+      <button class="back-btn" onclick="showPage('page-form')">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Назад
+      </button>
+      <div class="settings-header">
+        <div class="settings-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </div>
+        <div class="settings-title">Настройки</div>
+      </div>
+
+      <div id="configured-badge" class="configured-badge">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        <div>
+          <strong>Webhook настроен</strong>
+          <code id="masked-url"></code>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="font-size:15px;font-weight:600;margin-bottom:6px;">Discord Webhook URL</h3>
+        <p style="font-size:13px;color:var(--gray);margin-bottom:16px;">Заявки будут отправляться в Discord-канал через вебхук.</p>
+
+        <div class="info-box">
+          <p>Как создать вебхук:</p>
+          <ol>
+            <li>Открой нужный канал на Discord-сервере</li>
+            <li>Нажми на шестерёнку → «Интеграции»</li>
+            <li>Нажми «Вебхуки» → «Создать вебхук»</li>
+            <li>Скопируй URL и вставь ниже</li>
+          </ol>
+          <a href="https://support.discord.com/hc/ru/articles/228383668" target="_blank" rel="noopener">
+            Инструкция Discord
+            <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        </div>
+
+        <form id="settings-form" novalidate>
+          <div class="form-group" id="fg-webhook">
+            <label>Webhook URL</label>
+            <input type="text" id="f-webhook" placeholder="https://discord.com/api/webhooks/..." style="font-family:monospace;font-size:12px;">
+            <span class="err" id="err-webhook"></span>
+          </div>
+          <button type="submit" class="btn" id="save-btn">Сохранить</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Toast ─── -->
+  <div id="toast"></div>
+
+  <script>
+    const BASE = '';
+
+    /* ── Router ── */
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    /* ── Toast ── */
+    let toastTimer;
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+    }
+
+    /* ── Validate field ── */
+    function setError(id, msg) {
+      const fg = document.getElementById('fg-' + id);
+      const err = document.getElementById('err-' + id);
+      if (msg) { fg.classList.add('has-error'); err.textContent = msg; }
+      else      { fg.classList.remove('has-error'); err.textContent = ''; }
+    }
+
+    function validateForm() {
+      let ok = true;
+      const age = parseInt(document.getElementById('f-age').value);
+      const hours = parseInt(document.getElementById('f-hours').value);
+      const gameNick = document.getElementById('f-gameNick').value.trim();
+      const name = document.getElementById('f-name').value.trim();
+      const role = document.getElementById('f-role').value;
+      const discord = document.getElementById('f-discord').value.trim();
+
+      if (!document.getElementById('f-age').value || isNaN(age) || age < 14) {
+        setError('age', 'Возраст должен быть от 14 лет'); ok = false;
+      } else setError('age', '');
+
+      if (!document.getElementById('f-hours').value || isNaN(hours) || hours < 2000) {
+        setError('hours', 'Нужно минимум 2000 часов'); ok = false;
+      } else setError('hours', '');
+
+      if (gameNick.length < 2) { setError('gameNick', 'Укажи ник в игре'); ok = false; }
+      else setError('gameNick', '');
+
+      if (name.length < 2) { setError('name', 'Укажи своё имя'); ok = false; }
+      else setError('name', '');
+
+      if (!role) { setError('role', 'Выбери должность'); ok = false; }
+      else setError('role', '');
+
+      if (discord.length < 2) { setError('discord', 'Укажи Discord: Имя // Ник'); ok = false; }
+      else setError('discord', '');
+
+      return ok;
+    }
+
+    /* ── Check IP on load ── */
+    async function checkIp() {
+      try {
+        const r = await fetch(BASE + '/api/applications/check');
+        if (r.ok) {
+          const d = await r.json();
+          if (d.alreadySubmitted) showPage('page-already');
+        }
+      } catch (_) {}
+    }
+
+    /* ── Load webhook status ── */
+    async function loadWebhookStatus() {
+      try {
+        const r = await fetch(BASE + '/api/settings/webhook');
+        if (r.ok) {
+          const d = await r.json();
+          const badge = document.getElementById('configured-badge');
+          if (d.configured) {
+            badge.classList.add('show');
+            document.getElementById('masked-url').textContent = d.maskedUrl || '';
+          } else {
+            badge.classList.remove('show');
+          }
+        }
+      } catch (_) {}
+    }
+
+    /* ── Submit application ── */
+    document.getElementById('apply-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if (!validateForm()) return;
+
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Отправка...';
+
+      const body = {
+        privilege: document.getElementById('f-privilege').value.trim(),
+        age:       document.getElementById('f-age').value.trim(),
+        hours:     document.getElementById('f-hours').value.trim(),
+        gameNick:  document.getElementById('f-gameNick').value.trim(),
+        name:      document.getElementById('f-name').value.trim(),
+        role:      document.getElementById('f-role').value,
+        discord:   document.getElementById('f-discord').value.trim(),
+      };
+
+      try {
+        const r = await fetch(BASE + '/api/applications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        if (r.status === 201) {
+          showPage('page-success');
+        } else if (r.status === 409) {
+          showPage('page-already');
+        } else if (r.status === 503) {
+          toast('Вебхук не настроен. Обратитесь к администратору.');
+        } else {
+          toast('Ошибка отправки. Попробуй позже.');
+        }
+      } catch (_) {
+        toast('Нет соединения. Проверь интернет.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Подать заявку';
+      }
+    });
+
+    /* ── Save webhook ── */
+    document.getElementById('settings-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const url = document.getElementById('f-webhook').value.trim();
+
+      if (!url) { setError('webhook', 'Вставь Webhook URL'); return; }
+      if (!url.startsWith('https://discord.com/api/webhooks/') && !url.startsWith('https://discordapp.com/api/webhooks/')) {
+        setError('webhook', 'Это должен быть Discord Webhook URL'); return;
+      }
+      setError('webhook', '');
+
+      const btn = document.getElementById('save-btn');
+      btn.disabled = true;
+      btn.textContent = 'Сохраняется...';
+
+      try {
+        const r = await fetch(BASE + '/api/settings/webhook', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url }),
+        });
+        if (r.ok) {
+          const d = await r.json();
+          const badge = document.getElementById('configured-badge');
+          badge.classList.add('show');
+          document.getElementById('masked-url').textContent = d.maskedUrl || '';
+          document.getElementById('f-webhook').value = '';
+          toast('Webhook сохранён!');
+        } else {
+          const d = await r.json().catch(() => ({}));
+          toast(d.error || 'Ошибка сохранения');
+        }
+      } catch (_) {
+        toast('Нет соединения.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Сохранить';
+      }
+    });
+
+    /* ── Load webhook status when settings page shown ── */
+    document.querySelector('[onclick="showPage(\'page-settings\');return false;"]').addEventListener('click', loadWebhookStatus);
+    document.querySelector('.back-btn').addEventListener('click', function() { /* already handled by onclick */ });
+
+    /* ── Init ── */
+    checkIp();
+  </script>
+</body>
+</html>
