@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XXL — Набор в клан</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  background:#000;
+  color:#ccc;
+  font-family:'Barlow',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+.wrap{
+  max-width:660px;
+  margin:0 auto;
+  padding:3rem 1.5rem 4rem;
+  position:relative;
+  z-index:1;
+}
+
+.header{
+  text-align:center;
+  margin-bottom:3rem;
+}
+
+.logo-img{
+  width:220px;
+  height:auto;
+  display:block;
+  margin:0 auto 1.5rem;
+  filter:drop-shadow(0 0 40px rgba(255,255,255,0.1));
+}
+
+.tagline{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:12px;
+  letter-spacing:9px;
+  color:#333;
+  text-transform:uppercase;
+  margin-bottom:1.2rem;
+}
+
+.status-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:transparent;
+  border:1px solid #222;
+  border-radius:2px;
+  padding:6px 16px;
+  font-size:10px;
+  letter-spacing:4px;
+  text-transform:uppercase;
+  color:#555;
+}
+.dot{
+  width:5px;height:5px;
+  border-radius:50%;
+  background:#fff;
+  display:inline-block;
+  box-shadow:0 0 8px #fff, 0 0 16px rgba(255,255,255,0.4);
+}
+
+.divider{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin:2.5rem 0 1.5rem;
+}
+.divider::before,.divider::after{
+  content:'';flex:1;
+  height:1px;
+  background:rgba(255,255,255,0.07);
+}
+.divider-label{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:10px;
+  letter-spacing:6px;
+  color:#2a2a2a;
+  white-space:nowrap;
+}
+
+.reqs-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-bottom:0.5rem;
+}
+.req{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border:1px solid #1a1a1a;
+  border-radius:2px;
+  padding:10px 14px;
+  font-size:12px;
+  color:#555;
+  letter-spacing:.5px;
+}
+.req-dot{
+  width:3px;height:3px;
+  background:#444;
+  border-radius:50%;
+  flex-shrink:0;
+}
+
+.card{
+  background:#080808;
+  border:1px solid #1c1c1c;
+  border-radius:3px;
+  padding:2rem 2rem 2.5rem;
+}
+
+.card-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:10px;
+  letter-spacing:6px;
+  color:#2a2a2a;
+  text-transform:uppercase;
+  margin-bottom:1.75rem;
+  padding-bottom:1.25rem;
+  border-bottom:1px solid #151515;
+}
+
+.field{margin-bottom:1.1rem}
+.field label{
+  display:block;
+  font-size:10px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:#333;
+  margin-bottom:7px;
+  font-weight:500;
+}
+.field input,
+.field select,
+.field textarea{
+  width:100%;
+  background:#000;
+  border:1px solid #1e1e1e;
+  border-radius:2px;
+  color:#bbb;
+  font-family:'Barlow',sans-serif;
+  font-size:14px;
+  font-weight:300;
+  padding:11px 14px;
+  outline:none;
+  transition:border-color .15s;
+  -webkit-appearance:none;
+  appearance:none;
+}
+.field input::placeholder,
+.field textarea::placeholder{color:#222}
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+  border-color:#3a3a3a;
+}
+.field select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23333'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  padding-right:36px;
+  cursor:pointer;
+}
+.field select option{background:#000;color:#bbb}
+.field textarea{resize:vertical;min-height:80px;line-height:1.6}
+
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+
+.btn{
+  width:100%;
+  margin-top:1rem;
+  padding:15px;
+  background:#fff;
+  border:none;
+  border-radius:2px;
+  color:#000;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:16px;
+  letter-spacing:6px;
+  cursor:pointer;
+  transition:background .15s, transform .1s;
+}
+.btn:hover{background:#ddd}
+.btn:active{transform:scale(0.995)}
+.btn:disabled{
+  background:transparent;
+  border:1px solid #222;
+  color:#333;
+  cursor:not-allowed;
+}
+
+.toast{
+  display:none;
+  position:fixed;
+  bottom:2rem;left:50%;
+  transform:translateX(-50%);
+  padding:11px 28px;
+  border-radius:2px;
+  font-size:12px;
+  font-weight:500;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  z-index:99;
+  animation:up .25s ease;
+  white-space:nowrap;
+}
+.toast.ok{background:#fff;color:#000;display:block}
+.toast.err{background:#0d0d0d;border:1px solid #333;color:#888;display:block}
+@keyframes up{
+  from{opacity:0;transform:translateX(-50%) translateY(6px)}
+  to{opacity:1;transform:translateX(-50%) translateY(0)}
+}
+
+@media(max-width:480px){
+  .reqs-grid,.row2{grid-template-columns:1fr}
+  .logo-img{width:175px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <img class="logo-img" src="xxl-logo.png" alt="XXL"
+      onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='block'">
+    <div id="logoFallback" style="display:none;font-family:'Bebas Neue',sans-serif;font-size:96px;letter-spacing:-3px;color:#fff;line-height:1;margin-bottom:1.5rem;text-shadow:2px 2px 0 #111,4px 4px 0 #0a0a0a">XXL</div>
+    <div class="tagline">Rust Clan</div>
+    <div class="status-pill"><span class="dot"></span>Набор открыт</div>
+  </div>
+
+  <div class="divider"><span class="divider-label">Требования</span></div>
+
+  <div class="reqs-grid">
+    <div class="req"><span class="req-dot"></span>Возраст от 14 лет</div>
+    <div class="req"><span class="req-dot"></span>От 2000 часов в Rust</div>
+    <div class="req"><span class="req-dot"></span>Адекватность</div>
+    <div class="req"><span class="req-dot"></span>Слушать коллеров</div>
+    <div class="req"><span class="req-dot"></span>Без флуда</div>
+    <div class="req"><span class="req-dot"></span>Привилегия — не обяз.</div>
+  </div>
+
+  <div class="divider"><span class="divider-label">Анкета</span></div>
+
+  <div class="card">
+    <div class="card-title">Заполни все поля и подай заявку</div>
+
+    <form id="appForm">
+      <div class="row2">
+        <div class="field">
+          <label>Возраст</label>
+          <input type="number" id="age" min="14" max="60" placeholder="16" required>
+        </div>
+        <div class="field">
+          <label>Часов в Rust</label>
+          <input type="number" id="hours" min="0" placeholder="2000" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Ник в игре</label>
+        <input type="text" id="gameNick" placeholder="твой ник в Rust" required>
+      </div>
+
+      <div class="field">
+        <label>Имя</label>
+        <input type="text" id="name" placeholder="Имя" required>
+      </div>
+
+      <div class="field">
+        <label>Discord — Имя // Ник</label>
+        <input type="text" id="discord" placeholder="Максим // MaxXL" required>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label>Привилегия</label>
+          <input type="text" id="priv" placeholder="VIP / нет">
+        </div>
+        <div class="field">
+          <label>Должность</label>
+          <select id="role" required>
+            <option value="">— выбери —</option>
+            <option>Фармила</option>
+            <option>Комбатёр</option>
+            <option>Электрик</option>
+            <option>Фермер</option>
+            <option>Билдер</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Дополнительно</label>
+        <textarea id="extra" placeholder="Расскажи о себе (по желанию)"></textarea>
+      </div>
+
+      <button type="submit" class="btn" id="submitBtn">Подать заявку</button>
+    </form>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const WORKER_URL = "https://xxl-apply.ТВОЙ_СУБДОМЕН.workers.dev";
+
+const form  = document.getElementById('appForm');
+const btn   = document.getElementById('submitBtn');
+const toast = document.getElementById('toast');
+
+function showToast(msg, type){
+  toast.textContent = msg;
+  toast.className = 'toast ' + type;
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => { toast.className = 'toast'; }, 5000);
+}
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  const data = {
+    age:     document.getElementById('age').value,
+    hours:   document.getElementById('hours').value,
+    nick:    document.getElementById('gameNick').value,
+    name:    document.getElementById('name').value,
+    discord: document.getElementById('discord').value,
+    priv:    document.getElementById('priv').value || 'Нет',
+    role:    document.getElementById('role').value,
+    extra:   document.getElementById('extra').value || 'Не указано',
+  };
+  btn.disabled = true;
+  btn.textContent = 'Отправляем...';
+  try {
+    const res  = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    if(res.ok){
+      showToast('Заявка отправлена', 'ok');
+      form.reset();
+    } else {
+      showToast(json.error || 'Ошибка', 'err');
+    }
+  } catch {
+    showToast('Ошибка сети', 'err');
+  }
+  btn.disabled = false;
+  btn.textContent = 'Подать заявку';
+});
+</script>
+</body>
+</html>
