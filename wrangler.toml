@@ -1,0 +1,7 @@
+name = "xxl-api"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "XXL_RATELIMIT"
+id = "1b24dea8b9fe459c9637ebbe9e2b14b7"
