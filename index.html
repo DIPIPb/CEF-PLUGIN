@@ -218,11 +218,14 @@ function vSet(box){
 }
 
 /* ---------- запуск ---------- */
-function bind(){live=true;if(window.cef)cef.on(onMsg)}
-if(window.cef&&cef.__ok)bind();else document.addEventListener('cefready',bind,{once:true});
+let bound=false;
+function bind(){if(bound||!(window.cef&&cef.on))return;bound=true;live=true;demo=false;cef.on(onMsg)}
+/* мост window.cef клиент подставляет ПОСЛЕ загрузки страницы - ждём его, демо не включаем */
+bind();document.addEventListener('cefready',bind);
+(function wait(){if(!bound){bind();setTimeout(wait,200)}})();
 
 /* ---------- демо в обычном браузере (без игры) ---------- */
-setTimeout(()=>{if(!live){demo=true;$('#demo').onclick=()=>mock('dip.menu',{s:S.active||'stat'});mock('dip.menu',{s:'stat'})}},700);
+if(/[?&]demo/.test(location.search))setTimeout(()=>{if(!live){demo=true;$('#demo').onclick=()=>mock('dip.menu',{s:S.active||'stat'});mock('dip.menu',{s:'stat'})}},700);
 function mock(a,d){
   setTimeout(()=>{
     const ic=['ZvTTdGqs/1alvRCw','WhCBLRvR/PvAhjYX','qhwP9zkQ/IFTIyD2','68GNyW05/ABdA8uC','K1Tdm9G1/uakjlj3'].map(x=>'https://i.postimg.cc/'+x+'.png');
