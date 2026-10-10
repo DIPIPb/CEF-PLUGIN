@@ -346,7 +346,7 @@ function vStat(box){
   }
   if(want==='res'||want==='craft'){
     var max=1;d.list.forEach(function(x){if(x.v>max)max=x.v});
-    var g=el('div','grid');g.style.gridTemplateColumns='repeat(6,1fr)';g.style.gridAutoRows='1fr';
+    var g=el('div','grid');g.style.gridTemplateColumns='repeat(6,1fr)';g.style.gridAutoRows='116px';
     slice(d.list,12).forEach(function(x){
       var c=el('div','card'),bar=el('div','bar2');bar.style.width=Math.max(2,Math.round(x.v/max*100))+'%';
       c.append(icon(x.id!=null?x.id:x.n),el('span','',title(x)),el('em','',num(x.v)),bar);g.append(c)});
@@ -394,7 +394,7 @@ function vBlock(box){
   [['all','Все'],['lock','Заблокированы'],['free','Доступны']].forEach(function(p){
     f.append(btn(p[1],S.bf===p[0]?'on':'',function(){S.bf=p[0];S.page=1;drawMain()}))});
   box.append(f);
-  var g=el('div','grid');g.style.gridTemplateColumns='repeat(7,1fr)';g.style.gridAutoRows='1fr';
+  var g=el('div','grid');g.style.gridTemplateColumns='repeat(7,1fr)';g.style.gridAutoRows='104px';
   slice(list,21).forEach(function(x){
     var c=el('div','card'),l=el('span');c.dataset.dl=d.at+x.t*1000;c.dataset.n=title(x);
     c.append(icon(x.id!=null?x.id:x.n),l);g.append(c);
@@ -436,7 +436,7 @@ function vStore(box){
   var items=d.items||[];
   if(!items.length)return box.append(emptyMsg('Корзина пуста'));
   chips([['Предметов',items.length]]);
-  var g=el('div','grid');g.style.gridTemplateColumns='repeat(6,1fr)';g.style.gridAutoRows='1fr';
+  var g=el('div','grid');g.style.gridTemplateColumns='repeat(6,1fr)';g.style.gridAutoRows='116px';
   slice(items,12).forEach(function(x){
     var c=el('div','card');c.append(icon(x.id!=null?x.id:x.n),el('span','',title(x)),el('em','',x.c!=null?'×'+num(x.c):''));
     if(x.p!=null)c.append(el('div','pr',num(x.p)));g.append(c)});
