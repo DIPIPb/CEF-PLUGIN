@@ -73,6 +73,18 @@ b{font-weight:700}
 .foot{display:flex;gap:10px;flex:none;align-items:center;justify-content:space-between}
 .foot .pg{flex:1}
 .foot>button{height:38px;padding:0 20px;flex:none;font-size:16px}
+.stages{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.stg{display:flex;align-items:center;gap:14px;padding:7px 12px 7px 0;position:relative;flex:none}
+.stg.ul{background:rgba(255,255,255,.075)}
+.sl{width:96px;flex:none;text-align:center}
+.sl b{display:block;font-size:17px;text-transform:uppercase}
+.sl .tm{display:block;font-size:13px;margin-top:2px;font-weight:700;color:var(--dim)}
+.ln{position:absolute;left:47px;width:2px;top:calc(50% + 26px);bottom:-9px;background:rgba(255,255,255,.16)}
+.stg.nx .ln{background:#d9906c}
+.stg:last-child .ln{display:none}
+.its{display:grid;grid-template-columns:repeat(7,66px);gap:6px;flex:1;min-width:0}
+.it{width:66px;height:66px;background:rgba(255,255,255,.075);display:grid;place-items:center}
+.it img{width:58px;height:58px;object-fit:contain}
 .warn{flex:none;background:rgba(209,178,131,.22);color:#d1b283;padding:10px;text-align:center}
 .set{display:flex;gap:8px;flex:1;min-height:0}
 .cats{width:34%;flex:none;display:flex;flex-direction:column;gap:6px}
@@ -134,6 +146,8 @@ function resolve(raw){
   return /^[A-Za-z0-9._ ]+$/.test(s)?s.toLowerCase():k.replace(/ /g,'.');
 }
 var SRC=function(id){var e=encodeURIComponent(id);return[
+  'icons/'+e+'.png',
+  'https://www.rustedit.io/images/imagelibrary/'+e+'.png',
   'https://rustlabs.com/img/items180/'+e+'.png',
   'https://wiki.rustclash.com/img/items180/'+e+'.png',
   'https://rustlabs.com/img/items40/'+e+'.png']};
@@ -161,6 +175,7 @@ var SVG={
 };
 function fallback(id,raw){
   var inner=SVG[id];
+  if(!inner&&/rifle|smg|pistol|shotgun|lmg|revolver|launcher|bow|gun|mp5|thompson|m249|hmlmg|minigun/.test(id))inner=GUN;
   if(!inner){
     var ch=(String(RU[id]||raw||'?').trim()[0]||'?').toUpperCase();
     inner='<rect x="8" y="8" width="48" height="48" rx="6" fill="#3a3733"/><text x="32" y="43" font-size="30" font-family="Arial" text-anchor="middle" fill="#d1b283">'+ch+'</text>';
@@ -168,15 +183,20 @@ function fallback(id,raw){
   return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">'+inner+'</svg>');
 }
 var BAD={};
+var GUN='<path d="M4 28h34l4-6h10v10H42l-2 4H32l-3 12h-8l3-12H4z" fill="#8d8d89"/><rect x="42" y="24" width="12" height="3" fill="#b9b9b4"/>';
 function icon(raw,cls){
-  var id=resolve(raw),i=el('img',cls),L=SRC(id),k=0;
+  var id=resolve(raw),i=el('img',cls),L=SRC(id),k=0,tm=0;
+  i.referrerPolicy='no-referrer';
   if(BAD[id]){i.src=fallback(id,raw);return i}
-  i.onerror=function(){
-    k++;
-    if(k<L.length)i.src=L[k];
-    else{i.onerror=null;BAD[id]=1;i.src=fallback(id,raw)}
+  var arm=function(){tm=setTimeout(next,4000)};
+  var next=function(){
+    clearTimeout(tm);k++;
+    if(k<L.length){arm();i.src=L[k]}
+    else{i.onerror=i.onload=null;BAD[id]=1;i.src=fallback(id,raw)}
   };
-  i.src=L[0];return i;
+  i.onload=function(){clearTimeout(tm)};
+  i.onerror=next;
+  arm();i.src=L[0];return i;
 }
 var title=function(x){var id=resolve(x.id!=null?x.id:x.n);return(x.n&&norm(x.n)!==norm(x.id))?x.n:(RU[id]||x.n||x.id||'')};
 
@@ -334,38 +354,47 @@ function vStat(box){
 }
 
 /* ================= ВАЙПБЛОК ================= */
-var fmt=function(s){var d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);return(d?d+'д ':'')+(h?h+'ч ':'')+(m||(!d&&!h)?m+'м':'')};
+var pad2=function(n){return n<10?'0'+n:''+n};
+var hms=function(s){s=Math.max(0,s);return pad2(Math.floor(s/3600))+':'+pad2(Math.floor(s%3600/60))+':'+pad2(s%60)};
 var lastRef=0;
 function vBlock(box){
   var d=S.d['dip.block'];
-  box.append(el('div','warn','Внимание! Эти предметы временно заблокированы после вайпа.'));
   if(!d)return box.append(loading());
-  var now=Date.now(),lock=0,free=0;
-  var list=d.items.filter(function(x){
-    var left=Math.ceil((d.at+x.t*1000-now)/1000);if(left>0)lock++;else free++;
-    return S.bf==='all'||(S.bf==='lock'?left>0:left<=0)});
-  chips([['Заблокировано',lock],['Доступно',free]]);
-  var f=el('div','row');
-  [['all','Все'],['lock','Заблокированы ('+lock+')'],['free','Доступны ('+free+')']].forEach(function(p){
-    f.append(btn(p[1],S.bf===p[0]?'on':'',function(){S.bf=p[0];S.page=1;drawMain()}))});
-  box.append(f);
-  var g=el('div','grid');g.style.gridTemplateColumns='repeat(7,1fr)';g.style.gridAutoRows='104px';
-  slice(list,21).forEach(function(x){
-    var c=el('div','card'),l=el('span');c.dataset.dl=d.at+x.t*1000;c.dataset.n=title(x);
-    c.append(icon(x.id!=null?x.id:x.n),l);g.append(c);
+  var map={},keys=[];
+  d.items.forEach(function(x){var k=x.s!=null?x.s:x.t;if(!map[k]){map[k]=[];keys.push(k)}map[k].push(x)});
+  keys.sort(function(a,b){return a-b});
+  var PR=7,MAXH=490,stages=keys.map(function(k,i){
+    var it=map[k],t=0;it.forEach(function(x){if(x.t>t)t=x.t});return{n:i+1,items:it,t:t}});
+  var pages=[],cur=[],h=0;
+  stages.forEach(function(st){
+    var r=Math.ceil(st.items.length/PR),sh=r*66+(r-1)*6+14;
+    if(cur.length&&h+sh+8>MAXH){pages.push(cur);cur=[];h=0}
+    cur.push(st);h+=sh+8;
+  });
+  if(cur.length)pages.push(cur);
+  if(S.page>pages.length)S.page=pages.length||1;
+  var wrap=el('div','stages');
+  (pages[S.page-1]||[]).forEach(function(st){
+    var row=el('div','stg'),lab=el('div','sl'),tm=el('span','tm'),its=el('div','its');
+    row.dataset.dl=d.at+st.t*1000;
+    lab.append(el('b','',st.n+' этап'),tm);
+    st.items.forEach(function(x){
+      var t=el('div','it');t.title=title(x);t.append(icon(x.id!=null?x.id:x.n));its.append(t)});
+    row.append(lab,el('div','ln'),its);wrap.append(row);
   });
   var b=el('div','foot'),rf=btn('Обновить','',function(){
     if(Date.now()-lastRef<5000)return;lastRef=Date.now();rf.disabled=true;setTimeout(function(){rf.disabled=false},5000);send('dip.block',{})});
-  b.append(pager(list.length,21),rf);
-  box.append(list.length?g:emptyMsg('Нет предметов'),b);tick();
+  b.append(pager(pages.length,1),rf);
+  box.append(pages.length?wrap:emptyMsg('Нет предметов'),b);tick();
 }
 function tick(){
-  var cs=document.querySelectorAll('#body .card[data-dl]');
-  for(var i=0;i<cs.length;i++){
-    var c=cs[i],left=Math.ceil((c.dataset.dl-Date.now())/1000),l=c.querySelector('span');
-    c.classList.toggle('lock',left>0);c.classList.toggle('free',left<=0);
-    l.textContent=left>0?fmt(left):c.dataset.n;
+  var rs=document.querySelectorAll('#body .stg[data-dl]');
+  for(var i=0;i<rs.length;i++){
+    var r=rs[i],left=Math.ceil((r.dataset.dl-Date.now())/1000);
+    r.querySelector('.tm').textContent=hms(left);
+    r.classList.toggle('ul',left<=0);
   }
+  for(var j=0;j<rs.length;j++)rs[j].classList.toggle('nx',!!rs[j+1]&&!rs[j+1].classList.contains('ul'));
 }
 setInterval(tick,1000);
 
@@ -431,8 +460,9 @@ function mock(a,d){
         sh.concat(sh).map(function(x,i){return{id:x,n:x,v:20000-i*700}});
       onMsg({type:'dip.stat',tab:d.tab,me:{k:42,d:17,kd:2.47,exp:1240,g:88000},list:list});
     }else if(a==='dip.block'){
-      var x=['rifle.ak','rocket.launcher','lmg.m249','smg.mp5','rifle.bolt','explosive.timed','pistol.python','rifle.sks'];
-      onMsg({type:'dip.block',items:Array.from({length:31},function(_,i){return{id:x[i%8],n:x[i%8],t:i%4?(i*2500):0}})});
+      var G=[[0,['shotgun.waterpipe','pistol.revolver']],[0,['flamethrower','pistol.python','revolver.hc','pistol.semiauto','shotgun.double','grenade.molotov','shotgun.m4','t1_smg']],[0,['shotgun.pump','shotgun.spas12','pistol.m92','pistol.prototype17','rifle.semiauto','coffeecan.helmet','roadsign.jacket','roadsign.kilt']],[9166,['rifle.sks','smg.2','smg.thompson','smg.mp5','rifle.m39','metal.facemask','metal.plate.torso']],[37966,['rifle.ak','rifle.lr300','rifle.bolt','rifle.l96','homingmissile.launcher','ballista.static','batteringram','grenade.f1','heavy.plate.helmet','heavy.plate.jacket','heavy.plate.pants']],[60000,['hmlmg','lmg.m249','minigun','catapult','grenade.beancan','surveycharge','explosive.satchel']],[80000,['rocket.launcher','ammo.rifle.explosive','explosive.timed','ammo.rocket.hv','ammo.rocket.fire','ammo.rocket.basic','ammo.rocket.mlrs']]];
+      var its=[];G.forEach(function(g,i){g[1].forEach(function(id){its.push({id:id,n:id,t:g[0],s:i+1})})});
+      onMsg({type:'dip.block',items:its});
     }else if(a==='dip.settings'){
       onMsg({type:'dip.settings',cats:[
         {k:'chat',n:'Чат',t:[{id:'pm',l:'Личные сообщения',v:true},{id:'sys',l:'Системные сообщения',v:true},{id:'sound',l:'Звук сообщений',v:false}]},
