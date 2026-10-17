@@ -33,6 +33,7 @@ if (process.argv[2]) {
 
 const hosts = [
   n => `https://rustlabs.com/img/items180/${encodeURIComponent(n)}.png`,
+  n => `https://rustlabs.com/img/items180/${encodeURIComponent(n.replace(/ +/g, "."))}.png`,
   n => `https://wiki.rustclash.com/img/items180/${encodeURIComponent(n)}.png`,
   n => `https://www.rustedit.io/images/imagelibrary/${encodeURIComponent(n)}.png`
 ];
