@@ -188,10 +188,12 @@ function fallback(id,raw){
 }
 var BAD={};
 var GUN='<path d="M4 28h34l4-6h10v10H42l-2 4H32l-3 12h-8l3-12H4z" fill="#8d8d89"/><rect x="42" y="24" width="12" height="3" fill="#b9b9b4"/>';
-function icon(raw,cls){
-  var id=resolve(raw),i=el('img',cls),L=SRC(id),k=0,tm=0;
-  i.referrerPolicy='no-referrer';
-  if(BAD[id]){i.src=fallback(id,raw);return i}
+/* оригинальные иконки берём из самой игры (клиентский мод: local.icons -> {type:'icon',id,src}); сайты - только запасной путь */
+var GAME_ICONS=false;   /* true = сначала просить иконки у клиентского мода (local.icons) */
+var ICONS={},REQ={},WAIT={},Q=[],qt=0;
+function web(i,id,raw){
+  var L=SRC(id),k=0,tm=0;
+  if(BAD[id]){i.src=fallback(id,raw);return}
   var arm=function(){tm=setTimeout(next,4000)};
   var next=function(){
     clearTimeout(tm);k++;
@@ -200,13 +202,46 @@ function icon(raw,cls){
   };
   i.onload=function(){clearTimeout(tm)};
   i.onerror=next;
-  arm();i.src=L[0];return i;
+  arm();i.src=L[0];
+}
+function flushQ(){
+  qt=0;
+  if(Q.length)send('local.icons',{ids:Q.splice(0,30)});
+  if(Q.length)qt=setTimeout(flushQ,60);
+}
+function want(id){
+  if(REQ[id])return;REQ[id]=1;Q.push(id);
+  if(!qt)qt=setTimeout(flushQ,30);
+  setTimeout(function(){
+    if(ICONS[id]===undefined){ICONS[id]=0;giveUp(id)}
+  },2500);
+}
+function giveUp(id){
+  var w=WAIT[id];delete WAIT[id];
+  if(w)w.forEach(function(x){web(x.i,id,x.raw)});
+}
+function gotIcon(id,src){
+  ICONS[id]=src||0;
+  var w=WAIT[id];delete WAIT[id];
+  if(!w)return;
+  w.forEach(function(x){if(src){x.i.onerror=x.i.onload=null;x.i.src=src}else web(x.i,id,x.raw)});
+}
+function icon(raw,cls){
+  var id=resolve(raw),i=el('img',cls);
+  i.referrerPolicy='no-referrer';
+  var c=ICONS[id];
+  if(c){i.src=c;return i}
+  if(c===0||!live||!GAME_ICONS){web(i,id,raw);return i}
+  (WAIT[id]=WAIT[id]||[]).push({i:i,raw:raw});
+  want(id);
+  return i;
 }
 var title=function(x){var id=resolve(x.id!=null?x.id:x.n);return(x.n&&norm(x.n)!==norm(x.id))?x.n:(RU[id]||x.n||x.id||'')};
 
 /* ================= СООБЩЕНИЯ ОТ СЕРВЕРА ================= */
 function onMsg(m){
   if(!m||!m.type)return;
+  if(m.type==='icon'){gotIcon(m.id,m.src);return}
   if(m.type==='dip.menu'){
     var sw=S.active!==m.active;S.items=m.items;S.me=m.me;S.active=m.active;
     if(sw){S.tab='me';S.sub='res';S.page=1;S.cat=0;S.bf='all'}
