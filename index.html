@@ -145,12 +145,16 @@ function resolve(raw){
   var s=String(raw==null?'':raw).trim();
   return /^[A-Za-z0-9._ ]+$/.test(s)?s.toLowerCase():k.replace(/ /g,'.');
 }
-var SRC=function(id){var e=encodeURIComponent(id);return[
-  'icons/'+e+'.png',
-  'https://www.rustedit.io/images/imagelibrary/'+e+'.png',
-  'https://rustlabs.com/img/items180/'+e+'.png',
-  'https://wiki.rustclash.com/img/items180/'+e+'.png',
-  'https://rustlabs.com/img/items40/'+e+'.png']};
+var SRC=function(id){
+  var names=[id];
+  if(/[ ]/.test(id))names.push(id.replace(/ +/g,'.'));          /* 'military flamethrower' -> 'military.flamethrower' */
+  var out=[];
+  names.forEach(function(n){var e=encodeURIComponent(n);
+    out.push('icons/'+e+'.png',                                  /* своя копия (node download-icons.js) - быстрее всего */
+             'https://rustlabs.com/img/items180/'+e+'.png',      /* оригинальные иконки предметов Rust */
+             'https://www.rustedit.io/images/imagelibrary/'+e+'.png',
+             'https://wiki.rustclash.com/img/items180/'+e+'.png')});
+  return out};
 
 /* встроенные SVG - показываются, если все сайты не ответили (нет интернета / блок хотлинка) */
 var G='#9a9a96',GD='#6f6f6b';
