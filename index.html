@@ -545,10 +545,9 @@ function vStat(box){
     var max=1;list.forEach(function(x){if(x.v>max)max=x.v});
     var g=el('div','rg');
     list.forEach(function(x){
-      var c=el('div','rw'),f=el('div','f'),pc=Math.max(2,Math.round(x.v/max*100));
-      c.append(f,icon(x.id!=null?x.id:x.n),el('div','w',title(x)),el('em','',num(x.v)));
+      var c=el('div','rw');
+      c.append(icon(x.id!=null?x.id:x.n),el('div','w',title(x)),el('em','',num(x.v)));
       g.append(c);
-      requestAnimationFrame(function(){requestAnimationFrame(function(){f.style.width=pc+'%'})});
     });
     if(list.length){smooth(g);R.append(g)}else R.append(emptyMsg('Пока пусто'));
   }else if(want==='history'){
