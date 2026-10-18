@@ -1,0 +1,5 @@
+{
+  "name": "dip-cef-ui",
+  "private": true,
+  "engines": { "node": ">=18" }
+}
