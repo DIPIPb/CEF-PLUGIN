@@ -17,7 +17,8 @@ button.on,button.on:hover{background:#fff;color:#1c1c1c;font-weight:700}
 button:disabled{opacity:.4;cursor:default}
 img{display:block}
 b{font-weight:700}
-#app{position:fixed;top:0;left:0;right:0;bottom:0;display:none;align-items:center;justify-content:center;background:rgba(28,28,28,.95)}
+#app{position:fixed;top:0;left:0;right:0;bottom:0;display:none;align-items:center;justify-content:center;background:none}
+body.demo #app{background:#1c1c1c}
 #app.on{display:flex;animation:fadein .26s var(--ease)}
 #app.on #shell{animation:shellin .4s var(--ease)}
 #app.out{animation:fadeout .2s var(--ease) forwards}
@@ -26,8 +27,6 @@ b{font-weight:700}
 @keyframes fadeout{to{opacity:0}}
 @keyframes shellin{from{opacity:0;transform:translateY(16px) scale(.98)}}
 @keyframes shellout{to{opacity:0;transform:translateY(8px) scale(.985)}}
-#x{position:fixed;top:10px;right:10px;width:44px;height:34px;font-size:18px;color:var(--bad);background:var(--pane)}
-#x:hover{background:var(--pane2)}
 
 /* ===== каркас как на макете ===== */
 #shell{width:min(1025px,96vw);height:min(470px,92vh);display:flex;gap:9px}
@@ -177,8 +176,7 @@ b{font-weight:700}
 </style>
 </head>
 <body>
-<div id="app"><button id="x" aria-label="Закрыть">✕</button>
-<div id="shell"><div id="side"><div id="me"><div id="ava"></div><div><b id="nm"></b><small id="exp"></small></div></div><div id="nav"></div></div><div id="main"><div id="head"><span id="ttl"></span></div><div id="body"></div></div></div></div>
+<div id="app"><div id="shell"><div id="side"><div id="me"><div id="ava"></div><div><b id="nm"></b><small id="exp"></small></div></div><div id="nav"></div></div><div id="main"><div id="head"><span id="ttl"></span></div><div id="body"></div></div></div></div>
 <button id="demo">Открыть меню (демо)</button>
 <script>
 (function(){
@@ -341,7 +339,7 @@ function hide(rel){
     closeT=setTimeout(function(){a.classList.remove('on','out');if(demo)$('#demo').style.display='block'},210);
   }
 }
-$('#x').onclick=function(){hide()};
+$('#app').addEventListener('mousedown',function(e){if(e.target===this)hide()});
 addEventListener('keydown',function(e){if(e.key==='Escape'||e.keyCode===27)hide()});
 
 /* ================= ЛЕВАЯ КОЛОНКА ================= */
