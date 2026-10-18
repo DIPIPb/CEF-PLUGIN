@@ -106,6 +106,8 @@ body.demo #app{background:radial-gradient(ellipse at center,rgba(40,40,40,.82),r
 .sw i:after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;background:var(--dim);transition:left .26s var(--spring),background-color .25s var(--ease)}
 .sw.on i{background:rgba(187,196,126,.3)}
 .sw.on i:after{left:21px;background:var(--ok)}
+.kb{min-width:74px;text-align:center;padding:4px 12px;background:rgba(255,255,255,.12);color:var(--ok);font-weight:700;font-size:14px;flex:none}
+.kb.empty{color:var(--dim);font-weight:400}.kb.wait{color:#fff;background:var(--bl)}
 .info{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:6px}
 .info p{background:var(--pane);padding:10px 14px;line-height:1.45;font-size:15px}
 #demo{position:fixed;right:14px;bottom:14px;padding:10px 16px;display:none;background:var(--bl);color:#fff;font-weight:700}
@@ -405,7 +407,7 @@ function countUp(n,v){
 }
 function drawMain(){drawMain0();animateIn($('#body'))}
 function drawMain0(){
-  var box=$('#body');box.textContent='';chips();
+  stopCap();var box=$('#body');box.textContent='';chips();
   var id=S.active,cur=null;
   S.items.forEach(function(it){if(it.id===id)cur=it});
   if(S.empty[id])return box.append(emptyMsg('Раздел пока недоступен','Загляните сюда позже'));
@@ -567,12 +569,14 @@ function tick(){
 setInterval(tick,1000);addEventListener('resize',tick);
 
 /* ================= НАСТРОЙКИ ================= */
+var curPaint=null;
 function vSet(box){
   var d=S.d['dip.settings'];
   if(!d)return box.append(loading());
   var w=el('div','set'),cs=el('div','cats'),tg=el('div','tg'),bs=[];
   function paint(anim){
     var cat=d.cats[S.cat]||d.cats[0];tg.textContent='';
+    if(cat&&cat.b){drawBinds(tg,cat,anim);bs.forEach(function(b,i){b.classList.toggle('on',i===S.cat)});return}
     if(cat)cat.t.forEach(function(t,k){
       var r=el('div','sw'+(t.v?' on':'')+(anim?' vin':''));r.style.setProperty('--i',Math.min(k,14));
       r.append(el('span','',t.l),el('i'));
@@ -585,7 +589,39 @@ function vSet(box){
     var b=btn(c.n,i===S.cat?'on':'',function(){if(S.cat===i)return;S.cat=i;paint(true)});
     bs.push(b);cs.append(b);
   });
-  paint(false);w.append(cs,tg);box.append(w);
+  curPaint=paint;paint(false);w.append(cs,tg);box.append(w);
+}
+
+/* ================= БИНДЫ (категория с полем b: [{id,l,k}]) ================= */
+var VK=(function(){var m={},i;for(i=65;i<=90;i++)m[i]=String.fromCharCode(i);for(i=0;i<=9;i++){m[48+i]='Alpha'+i;m[96+i]='Keypad'+i}
+  for(i=1;i<=12;i++)m[111+i]='F'+i;m[37]='LeftArrow';m[38]='UpArrow';m[39]='RightArrow';m[40]='DownArrow';
+  m[45]='Insert';m[36]='Home';m[35]='End';m[33]='PageUp';m[34]='PageDown';return m})();
+function kname(k){return k?String(k).replace('Alpha','').replace('Keypad','Num ').replace('Arrow',''):'не назначено'}
+var capOff=null;
+function stopCap(){if(capOff){capOff();capOff=null}}
+function drawBinds(tg,cat,anim){
+  stopCap();
+  cat.b.forEach(function(b,k){
+    var r=el('div','sw'+(anim?' vin':''));r.style.setProperty('--i',Math.min(k,14));
+    var kb=el('b','kb'+(b.k?'':' empty'),kname(b.k));
+    r.append(el('span','',b.l),kb);
+    r.onclick=function(){
+      stopCap();kb.className='kb wait';kb.textContent='нажмите клавишу…';
+      function done(){kb.className='kb'+(b.k?'':' empty');kb.textContent=kname(b.k)}
+      function onKey(e){
+        e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+        var c=e.keyCode;
+        if(c===27){stopCap();done();return}                       /* Esc - отмена, меню не закрываем */
+        if(c===8||c===46){b.k='';stopCap();done();send('dip.bind',{i:b.id,k:''});return}   /* Backspace/Delete - снять */
+        var n=VK[c];if(!n)return;
+        cat.b.forEach(function(o){if(o.k===n&&o!==b)o.k=''});    /* визуально снимаем дубль, сервер подтвердит */
+        b.k=n;stopCap();if(curPaint)curPaint(false);send('dip.bind',{i:b.id,k:n});
+      }
+      addEventListener('keydown',onKey,true);
+      capOff=function(){removeEventListener('keydown',onKey,true)};
+    };
+    tg.append(r);
+  });
 }
 
 /* ================= КОРЗИНА (если сервер пришлёт dip.store: {items:[{id,n,c,p}]}) ================= */
@@ -642,7 +678,9 @@ function mock(a,d){
     }else if(a==='dip.settings'){
       onMsg({type:'dip.settings',cats:[
         {k:'chat',n:'Чат',t:[{id:'pm',l:'Личные сообщения',v:true},{id:'sys',l:'Системные сообщения',v:true},{id:'sound',l:'Звук сообщений',v:false}]},
-        {k:'hud',n:'Интерфейс',t:[{id:'kills',l:'Лента убийств',v:true},{id:'hit',l:'Маркеры попаданий',v:true}]}]});
+        {k:'hud',n:'Интерфейс',t:[{id:'kills',l:'Лента убийств',v:true},{id:'hit',l:'Маркеры попаданий',v:true}]},
+        {k:'optim',n:'Оптимизация',t:[{id:'noshadows',l:'Отключить тени',v:false},{id:'nograss',l:'Отключить траву',v:false},{id:'nobloom',l:'Отключить bloom',v:false},{id:'nofog',l:'Отключить туман',v:false}]},
+        {k:'binds',n:'Бинды',t:[],b:[{id:'kit',l:'Киты',k:'F5'},{id:'tpa',l:'Принять телепорт',k:''}]}]});
     }
   },60);
 }
