@@ -298,6 +298,7 @@ var title=function(x){var id=resolve(x.id!=null?x.id:x.n);return(x.n&&norm(x.n)!
 function onMsg(m){
   if(!m||!m.type)return;
   if(m.type==='icon'){gotIcon(m.id,m.src);return}
+  if(m.type==='keycap'){onKeycap(m);return}
   if(m.type==='dip.menu'){
     var sw=S.active!==m.active;S.items=m.items;S.me=m.me;S.active=m.active;
     if(sw){S.tab='me';S.sub='res';S.page=1;S.cat=0;S.bf='all'}
@@ -593,12 +594,21 @@ function vSet(box){
 }
 
 /* ================= БИНДЫ (категория с полем b: [{id,l,k}]) ================= */
-var VK=(function(){var m={},i;for(i=65;i<=90;i++)m[i]=String.fromCharCode(i);for(i=0;i<=9;i++){m[48+i]='Alpha'+i;m[96+i]='Keypad'+i}
-  for(i=1;i<=12;i++)m[111+i]='F'+i;m[37]='LeftArrow';m[38]='UpArrow';m[39]='RightArrow';m[40]='DownArrow';
-  m[45]='Insert';m[36]='Home';m[35]='End';m[33]='PageUp';m[34]='PageDown';return m})();
+/* Клавишу ловит КЛИЕНТ игры (страница букв/F-клавиш не получает): строка шлёт local.keycap,
+   клиент отвечает сообщением {type:'keycap',i,k,c}. Esc - отмена, Backspace/Delete - снять бинд. */
 function kname(k){return k?String(k).replace('Alpha','').replace('Keypad','Num ').replace('Arrow',''):'не назначено'}
-var capOff=null;
-function stopCap(){if(capOff){capOff();capOff=null}}
+var capCur=null;
+function stopCap(){if(capCur){var c=capCur;capCur=null;c.done();send('local.keycap',{i:''})}}
+function onKeycap(m){
+  if(!capCur||capCur.b.id!==m.i)return;
+  var c=capCur;capCur=null;
+  if(!m.c){
+    c.cat.b.forEach(function(o){if(m.k&&o.k===m.k&&o!==c.b)o.k=''});    /* дубль снимаем визуально, сервер подтвердит */
+    c.b.k=m.k||'';
+  }
+  c.done();
+  if(!m.c&&curPaint)curPaint(false);
+}
 function drawBinds(tg,cat,anim){
   stopCap();
   cat.b.forEach(function(b,k){
@@ -606,19 +616,11 @@ function drawBinds(tg,cat,anim){
     var kb=el('b','kb'+(b.k?'':' empty'),kname(b.k));
     r.append(el('span','',b.l),kb);
     r.onclick=function(){
-      stopCap();kb.className='kb wait';kb.textContent='нажмите клавишу…';
-      function done(){kb.className='kb'+(b.k?'':' empty');kb.textContent=kname(b.k)}
-      function onKey(e){
-        e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
-        var c=e.keyCode;
-        if(c===27){stopCap();done();return}                       /* Esc - отмена, меню не закрываем */
-        if(c===8||c===46){b.k='';stopCap();done();send('dip.bind',{i:b.id,k:''});return}   /* Backspace/Delete - снять */
-        var n=VK[c];if(!n)return;
-        cat.b.forEach(function(o){if(o.k===n&&o!==b)o.k=''});    /* визуально снимаем дубль, сервер подтвердит */
-        b.k=n;stopCap();if(curPaint)curPaint(false);send('dip.bind',{i:b.id,k:n});
-      }
-      addEventListener('keydown',onKey,true);
-      capOff=function(){removeEventListener('keydown',onKey,true)};
+      if(capCur&&capCur.b===b)return;
+      stopCap();
+      kb.className='kb wait';kb.textContent='нажмите клавишу…';
+      capCur={b:b,cat:cat,done:function(){kb.className='kb'+(b.k?'':' empty');kb.textContent=kname(b.k)}};
+      send('local.keycap',{i:b.id});
     };
     tg.append(r);
   });
