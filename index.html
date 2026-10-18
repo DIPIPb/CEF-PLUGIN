@@ -95,8 +95,8 @@ body.demo #app{background:#1c1c1c}
  background:linear-gradient(90deg,#fff 0%,#0000ff 25%,#fff 50%,#0000ff 75%,#fff 100%);background-size:200% 100%;
  -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:shine 9s linear infinite}
 @keyframes shine{from{background-position:0% 0}to{background-position:200% 0}}
-.hb{flex:none;height:10px;display:flex;gap:3px;background:var(--in);border-radius:999px;overflow:hidden}
-.hb i{display:block;height:100%;width:0;border-radius:999px;transition:width .9s var(--ease)}
+.hb{flex:none;height:10px;display:flex;gap:0;background:var(--in);border-radius:999px;overflow:hidden}
+.hb i{display:block;height:100%;width:0;transition:width .9s var(--ease)}
 .hb .a{background:#2bff0f}
 .hb .b{background:#ff1c0a}
 .hb .c{background:#fff}
@@ -456,9 +456,9 @@ var loading=function(){return el('div','msg','Загрузка…')};
 /* ================= ГЛАВНАЯ (dip.home: {name,on,max,sl,banner}) ================= */
 var HOME_NAME='DIPRUST X2 NoLimit x2-x5';
 function homeVals(d){
-  var max=Math.max(1,Number(d.max)||1),on=Math.max(0,Math.min(max,Number(d.on)||0)),free=max-on,sl=Math.max(0,Number(d.sl)||0),tot=max+sl;
-  return{v:[on,free,sl],w:[on,free,sl].map(function(v){return Math.round(v/tot*1000)/10}),
-    t:['Онлайн: '+on+'/'+max,'Оффлайн: '+free+'/'+max,'Слиперы: '+sl]};
+  var max=Math.max(1,Number(d.max)||1),on=Math.max(0,Number(d.on)||0),jn=Math.max(0,Number(d.jn)||0),sl=Math.max(0,Number(d.sl)||0),tot=Math.max(1,on+jn+sl);
+  return{v:[on,jn,sl],w:[on,jn,sl].map(function(v){return Math.round(v/tot*1000)/10}),
+    t:['Онлайн: '+on+'/'+max,'Заходят: '+jn,'Слиперы: '+sl]};
 }
 function updHome(d){
   var h=homeVals(d),bar=$('#body .hb'),sp=document.querySelectorAll('#body .hl span');
@@ -751,7 +751,7 @@ function mock(a,d){
       else if(d.s==='stat')mock('dip.stat',{tab:'res'});else if(d.s==='block')mock('dip.block');
       else if(d.s==='settings')mock('dip.settings');else onMsg({type:'dip.empty',s:d.s});
     }else if(a==='dip.home'){
-      onMsg({type:'dip.home',name:'DIPRUST X2 NoLimit x2-x5',on:100,max:200,sl:100,banner:''});
+      onMsg({type:'dip.home',name:'DIPRUST X2 NoLimit x2-x5',on:100,max:200,jn:3,sl:100,banner:''});
     }else if(a==='dip.stat'){
       var sh=['wood','stones','metal.ore','sulfur.ore','cloth','leather','fat.animal','scrap','metal.fragments','lowgradefuel','charcoal','gunpowder'];
       var list=d.tab==='top'?Array.from({length:19},function(_,i){return{n:i===2?'YUKKAYHO':'Player '+(i+1),k:60-i*3,d:20+i,g:90000-i*3000,kd:+((60-i*3)/(20+i)).toFixed(2)}}):
