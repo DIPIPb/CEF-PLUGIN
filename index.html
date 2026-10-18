@@ -412,15 +412,19 @@ function drawNav(){
     else if(it.i){var i=el('img');i.src=it.i;ic.append(i)}
     b.append(ic,el('span','lb',it.n));n.append(b);
   });
-  paintNav();sizeNav();
+  paintNav();sizeNav();requestAnimationFrame(sizeNav);
 }
 /* одинаковая высота строк: квадрат иконки всегда равен высоте плитки */
 function sizeNav(){
   var n=$('#nav'),c=n.children.length;if(!c||!n.clientHeight)return;
   var h=Math.max(24,Math.min(60,Math.floor((n.clientHeight-(c-1)*6)/c)));
   n.style.setProperty('--rh',h+'px');
+  /* низ правого окна = низ последней кнопки (остаток от округления высоты убираем снизу окна) */
+  var left=n.clientHeight-(c*h+(c-1)*6);
+  $('#main').style.paddingBottom=(h<60&&left>0?left:0)+'px';
 }
 addEventListener('resize',sizeNav);
+if(window.ResizeObserver)new ResizeObserver(sizeNav).observe($('#nav'));
 
 /* ================= ОБЩЕЕ ================= */
 function pages(cur,n){
@@ -779,7 +783,7 @@ if(/[?&]demo/.test(location.search))document.body.classList.add('demo');
 if(/[?&]demo/.test(location.search))setTimeout(function(){if(!live){demo=true;$('#demo').onclick=function(){mock('dip.menu',{s:S.active||'home'})};mock('dip.menu',{s:'home'})}},700);
 function mock(a,d){
   setTimeout(function(){
-    var names=['Главная','Корзина','Статистика','Информация','Вайп-блок','Настройки'],ids=['home','store','stat','info','block','settings'];
+    var names=['Главная','Рулетка','Корзина','Статистика','Вайп-блок','Пожаловаться','Информация','Настройки'],ids=['home','roulette','store','stat','block','report','info','settings'];
     if(a==='dip.menu'){
       onMsg({type:'dip.menu',active:d.s,items:ids.map(function(x,i){return{id:x,n:names[i],i:''}}),me:{name:'YUKKAYHO',id:'76569999999',exp:1240,ava:''}});
       if(d.s==='home')mock('dip.home');
