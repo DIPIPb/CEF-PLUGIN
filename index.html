@@ -46,7 +46,7 @@ body.demo #app{background:#1c1c1c}
 .nb .ic svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .nb:hover .ic,.nb:hover .lb{background:var(--pane2)}
 .nb.on .ic,.nb.on .lb{background:var(--bl);color:#fff}
-#main{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:9px}
+#main{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:6px}
 #head{height:66px;flex:none;background:var(--pane);display:flex;align-items:center;padding:0 24px;font-size:25px;font-weight:700}
 #body{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;background:var(--pane);padding:14px 16px}
 .msg{margin:auto;color:var(--dim);font-size:16px;text-align:center;line-height:1.5}
@@ -103,8 +103,6 @@ body.demo #app{background:#1c1c1c}
 .hl{display:flex;gap:18px;flex:none;font-size:12px;font-weight:700;padding-bottom:4px}
 .hl span{display:flex;align-items:center;gap:6px}
 .hl span:before{content:"";width:14px;height:14px;border-radius:50%;background:var(--c)}
-.hm{padding-left:0!important;padding-right:0!important;padding-bottom:0!important}
-.hm>.hn,.hm>.hb,.hm>.hl{margin-left:16px;margin-right:16px}
 .soc{flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .sc{--c:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:0;padding:0;background:var(--in);text-decoration:none}
 .sc svg{width:min(88px,38%);max-height:46%;fill:currentColor;color:rgba(255,255,255,.8);transition:color .25s var(--ease),transform .25s var(--ease)}
@@ -501,7 +499,6 @@ function updHome(d){
 function vHome(box){
   var d=S.d['dip.home'];
   if(!d)return box.append(loading());
-  box.className='hm';
   var nm=d.name||HOME_NAME;
   box.append(el('div','hn',nm));
   var bar=el('div','hb');
