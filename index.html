@@ -38,9 +38,9 @@ body.demo #app{background:#1c1c1c}
 #nm{display:block;font-size:19px;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #exp{display:block;font-size:11px;margin-top:3px;color:rgba(255,255,255,.75);letter-spacing:.03em}
 #nav{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px}
-.nb{display:flex;gap:6px;flex:1 1 0;min-height:26px;max-height:60px;padding:0;background:none!important;text-align:center}
+.nb{display:flex;gap:6px;flex:none;height:var(--rh,60px);padding:0;background:none!important;text-align:center}
 .nb .ic,.nb .lb{background:var(--pane);transition:background-color .22s var(--ease),color .22s var(--ease)}
-.nb .ic{aspect-ratio:1/1;align-self:stretch;display:grid;place-items:center;flex:none;padding:8px}
+.nb .ic{width:var(--rh,60px);height:100%;display:grid;place-items:center;flex:none;padding:calc(var(--rh,60px)*.14)}
 .nb .lb{flex:1;min-width:0;display:grid;place-items:center;font-size:16px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 6px}
 .nb .ic svg,.nb .ic img{width:100%;height:100%;display:block;object-fit:contain}
 .nb .ic svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -344,7 +344,7 @@ function onMsg(m){
     if(sw){S.tab='me';S.sub='res';S.page=1;S.cat=0;S.bf='all'}
     clearTimeout(closeT);$('#app').classList.remove('out');$('#app').classList.add('on');$('#demo').style.display='none';
     if(!$('#app').dataset.cap){$('#app').dataset.cap=1;send('capture')}
-    drawMe();drawNav();drawMain();
+    drawMe();drawNav();sizeNav();drawMain();
   }else if(m.type==='dip.empty'){S.empty[m.s]=true;drawMain()}
   else if(m.type==='dip.home'&&(S.active!=='home'||(S.d['dip.home']&&updHome(m)))){S.d['dip.home']=m}
   else if(m.type.indexOf('dip.')===0){m.at=Date.now();S.d[m.type]=m;delete S.empty[m.type.slice(4)];drawMain()}
@@ -411,8 +411,15 @@ function drawNav(){
     else if(it.i){var i=el('img');i.src=it.i;ic.append(i)}
     b.append(ic,el('span','lb',it.n));n.append(b);
   });
-  paintNav();
+  paintNav();sizeNav();
 }
+/* одинаковая высота строк: квадрат иконки всегда равен высоте плитки */
+function sizeNav(){
+  var n=$('#nav'),c=n.children.length;if(!c||!n.clientHeight)return;
+  var h=Math.max(24,Math.min(60,Math.floor((n.clientHeight-(c-1)*6)/c)));
+  n.style.setProperty('--rh',h+'px');
+}
+addEventListener('resize',sizeNav);
 
 /* ================= ОБЩЕЕ ================= */
 function pages(cur,n){
