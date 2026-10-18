@@ -40,7 +40,7 @@ body.demo #app{background:#1c1c1c}
 #nav{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px}
 .nb{display:flex;gap:6px;flex:1 1 0;min-height:26px;max-height:60px;padding:0;background:none!important;text-align:center}
 .nb .ic,.nb .lb{background:var(--pane);transition:background-color .22s var(--ease),color .22s var(--ease)}
-.nb .ic{aspect-ratio:1/1;align-self:stretch;display:grid;place-items:center;flex:none;padding:12px}
+.nb .ic{aspect-ratio:1/1;align-self:stretch;display:grid;place-items:center;flex:none;padding:8px}
 .nb .lb{flex:1;min-width:0;display:grid;place-items:center;font-size:16px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 6px}
 .nb .ic svg,.nb .ic img{width:100%;height:100%;display:block;object-fit:contain}
 .nb .ic svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -108,7 +108,21 @@ body.demo #app{background:#1c1c1c}
 .ban .ph{position:absolute;inset:0;display:grid;place-items:center;font-size:56px;letter-spacing:.06em;font-weight:700;text-transform:uppercase;text-align:center;padding:20px;background:linear-gradient(135deg,#262626,#444)}
 
 /* ===== СТАТИСТИКА ===== */
-.tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;flex:none}
+.sv{display:flex;gap:9px;flex:1;min-height:0}
+.sl{width:200px;flex:none;display:flex;flex-direction:column;gap:6px;min-height:0}
+.sr{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:8px}
+.sb{display:flex;gap:6px;height:54px;flex:none;padding:0;background:none!important;text-align:center}
+.sb .ic,.sb .lb{background:var(--in);transition:background-color .22s var(--ease),color .22s var(--ease)}
+.sb .ic{width:54px;flex:none;display:grid;place-items:center;padding:8px}
+.sb .ic svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sb .lb{flex:1;min-width:0;display:grid;place-items:center;font-size:15px;line-height:1.1;font-weight:700;padding:0 6px}
+.sb:hover .ic,.sb:hover .lb{background:var(--pane2)}
+.sb.on .ic,.sb.on .lb{background:var(--bl);color:#fff}
+.kc{flex:1;min-height:0;background:var(--in);display:flex;align-items:center;gap:10px;padding:0 12px}
+.kc svg{width:84px;height:84px;flex:none}
+.kc small{display:block;color:var(--dim);font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+.kc b{display:block;font-size:28px;line-height:1.1}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex:none}
 .tile{background:var(--in);padding:8px 12px 11px;position:relative;overflow:hidden;min-width:0}
 .tile small{display:block;color:var(--dim);font-size:12px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
 .tile b{display:block;font-size:24px;margin-top:1px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -118,13 +132,16 @@ body.demo #app{background:#1c1c1c}
 .tile.r:after{display:none}
 .rb{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--bad)}
 .rb i{display:block;height:100%;width:0;background:var(--ok);transition:width .9s var(--ease)}
-.rg{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(5,minmax(0,1fr));grid-auto-flow:column;gap:4px 8px;flex:1;min-height:0}
+.rg{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,minmax(0,1fr));grid-auto-flow:column;gap:4px 8px;flex:1;min-height:0}
 .hs{display:grid;grid-template-rows:repeat(6,minmax(0,1fr));gap:4px;flex:1;min-height:0}
 .rw{position:relative;display:flex;align-items:center;gap:10px;padding:0 12px;background:var(--in);overflow:hidden;min-height:0;min-width:0}
 .rw>*{position:relative;flex:none}
 .rw>.f{position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(255,255,255,.1);transition:width .8s var(--ease)}
 .rw .w{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rw img{width:26px;height:26px;object-fit:contain}
+.rg .rw img{width:40px;height:40px}
+.hs .rw img{width:30px;height:30px}
+.rg .rw{font-size:16px}
 .rw em{font-style:normal;font-weight:700}
 .bd{width:24px;height:24px;display:grid;place-items:center;font-weight:700;font-size:13px;background:var(--pane)}
 .bd.k{background:var(--ok);color:#1c1c1c}.bd.d{background:var(--bad);color:#1c1c1c}.bd.s{color:var(--dim)}
@@ -210,9 +227,10 @@ var ALIAS={
  'gun powder':'gunpowder','gunpowder':'gunpowder','порох':'gunpowder',
  'bone fragments':'bone.fragments','bone fragment':'bone.fragments','кости':'bone.fragments','костные фрагменты':'bone.fragments',
  'plant fiber':'plantfiber','plantfiber':'plantfiber','растительное волокно':'plantfiber',
- 'paper':'paper','бумага':'paper','explosives':'explosives','взрывчатка':'explosives','crude oil':'crude.oil','нефть':'crude.oil'
+ 'paper':'paper','бумага':'paper','explosives':'explosives','взрывчатка':'explosives','crude oil':'crude.oil','нефть':'crude.oil',
+ 'raw bear meat':'bearmeat','bear meat':'bearmeat','raw wolf meat':'wolfmeat.raw','raw chicken breast':'chicken.raw','raw deer meat':'deermeat.raw','raw pork':'pork.raw','raw horse meat':'horsemeat.raw','raw human meat':'humanmeat.raw'
 };
-var RU={'wood':'Дерево','stones':'Камень','metal.ore':'Металл. руда','hq.metal.ore':'МВК руда','sulfur.ore':'Серн. руда','sulfur':'Сера','cloth':'Ткань','leather':'Кожа','fat.animal':'Жир','scrap':'Металлолом','metal.fragments':'Мет. фрагменты','metal.refined':'МВК','lowgradefuel':'Топливо','charcoal':'Уголь','gunpowder':'Порох','bone.fragments':'Кости','plantfiber':'Волокно','paper':'Бумага','explosives':'Взрывчатка','crude.oil':'Нефть'};
+var RU={'wood':'Дерево','stones':'Камень','metal.ore':'Металл. руда','hq.metal.ore':'МВК руда','sulfur.ore':'Серн. руда','sulfur':'Сера','cloth':'Ткань','leather':'Кожа','fat.animal':'Жир','scrap':'Металлолом','metal.fragments':'Мет. фрагменты','metal.refined':'МВК','lowgradefuel':'Топливо','charcoal':'Уголь','gunpowder':'Порох','bone.fragments':'Кости','plantfiber':'Волокно','paper':'Бумага','explosives':'Взрывчатка','crude.oil':'Нефть','bearmeat':'Мясо медведя','wolfmeat.raw':'Мясо волка','chicken.raw':'Курица','deermeat.raw':'Мясо оленя','pork.raw':'Свинина','horsemeat.raw':'Конина','humanmeat.raw':'Мясо человека'};
 var norm=function(s){return String(s==null?'':s).toLowerCase().replace(/[._\-\s]+/g,' ').trim()};
 function resolve(raw){
   var k=norm(raw);if(ALIAS[k])return ALIAS[k];
@@ -316,7 +334,7 @@ function icon(raw,cls){
   want(id);
   return i;
 }
-var title=function(x){var id=resolve(x.id!=null?x.id:x.n);return(x.n&&norm(x.n)!==norm(x.id))?x.n:(RU[id]||x.n||x.id||'')};
+var title=function(x){var id=resolve(x.id!=null?x.id:x.n);return RU[id]||((x.n&&norm(x.n)!==norm(x.id))?x.n:(x.n||x.id||''))};
 
 /* ================= СООБЩЕНИЯ ОТ СЕРВЕРА ================= */
 function onMsg(m){
@@ -424,7 +442,7 @@ function chips(){}
 
 function animateIn(box){
   var n=0;
-  box.querySelectorAll(':scope>.row,:scope>.msg,:scope>.pg,:scope>.foot,:scope>.warn,.tiles>.tile,.grid>.card,.rg>.rw,.hs>.rw,.tbr>.tr,:scope>.hn,:scope>.hb,:scope>.hl,:scope>.ban,.cats>button,.tg>.sw,.info>p').forEach(function(e){
+  box.querySelectorAll(':scope>.row,:scope>.msg,:scope>.pg,:scope>.foot,:scope>.warn,.tiles>.tile,.grid>.card,.sr>.pg,.rg>.rw,.hs>.rw,.tbr>.tr,:scope>.hn,:scope>.hb,:scope>.hl,:scope>.ban,.cats>button,.tg>.sw,.info>p').forEach(function(e){
     e.style.setProperty('--i',Math.min(n++,16));e.classList.add('vin');
   });
 }
@@ -492,42 +510,49 @@ function vHome(box){
 
 /* ================= СТАТИСТИКА ================= */
 /* протокол с сервером не менялся: dip.stat {tab:'res'|'craft'|'history'|'top', me:{k,d,kd,exp,g}, list:[...]} */
+var SI={
+ res:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>',
+ craft:'<path d="M13 4l7 7-3 3-7-7z" fill="currentColor"/><path d="M11 9.5L4 16.5 7.5 20l7-7"/>',
+ history:'<path d="M12 3c-4.4 0-7 2.9-7 6.5 0 2.2 1 3.7 2.5 4.6V18h9v-3.9c1.5-.9 2.5-2.4 2.5-4.6C19 5.9 16.4 3 12 3z"/><circle cx="9.2" cy="10.5" r="1.6" fill="currentColor"/><circle cx="14.8" cy="10.5" r="1.6" fill="currentColor"/><path d="M10 18v3M14 18v3"/>',
+ top:'<path d="M7 4h10v5a5 5 0 01-10 0z" fill="currentColor"/><path d="M7 6H4v2a3 3 0 003 3M17 6h3v2a3 3 0 01-3 3M12 14v4M8 21h8"/>'
+};
+var SN=[['res','Ресурсы'],['craft','Крафт'],['history','Убийства / Смерти'],['top','Топ игроков']];
 function vStat(box){
-  var top=S.tab==='top',want=top?'top':S.sub,d=S.d['dip.stat'];
-  var go=function(tab,sub){S.tab=tab;if(sub)S.sub=sub;S.page=1;drawMain();send('dip.stat',{tab:tab==='top'?'top':S.sub})};
-  var r=el('div','row seg');
-  r.append(btn('Моя статистика',top?'':'on',function(){go('me')}),btn('Топ игроков',top?'on':'',function(){go('top')}));
-  box.append(r);
-  if(!d||d.tab!==want)return box.append(loading());
+  if(!SI[S.sub])S.sub='res';
+  var want=S.sub,d=S.d['dip.stat'];
+  if(d&&d.me)S.mine=d.me;
+  var go=function(sub){if(S.sub===sub)return;S.sub=sub;S.page=1;drawMain();send('dip.stat',{tab:sub})};
+  var wrap=el('div','sv'),L=el('div','sl'),R=el('div','sr');
+  SN.forEach(function(n){
+    var b=btn('','sb'+(want===n[0]?' on':''),function(){go(n[0])}),ic=el('span','ic');
+    ic.innerHTML='<svg viewBox="0 0 24 24">'+SI[n[0]]+'</svg>';
+    b.append(ic,el('span','lb',n[1]));L.append(b);
+  });
+  var me=S.mine||{},k=Number(me.k)||0,dd=Number(me.d)||0,C=226.2,gr=(k+dd)?k/(k+dd)*C:0;
+  var kc=el('div','kc'),kb=el('b','',num(me.kd)),tx=el('div');
+  kc.innerHTML='<svg viewBox="0 0 88 88" fill="none" stroke-width="9"><circle cx="44" cy="44" r="36" stroke="'+((k+dd)?'#ff4a3a':'rgba(255,255,255,.15)')+'"/><circle cx="44" cy="44" r="36" stroke="#5fd13a" stroke-dasharray="'+gr.toFixed(1)+' '+C+'" transform="rotate(-90 44 44)"/></svg>';
+  tx.append(el('small','','K/D'),kb);kc.append(tx);L.append(kc);countUp(kb,me.kd);
+  wrap.append(L,R);box.append(wrap);
+  if(!d||d.tab!==want)return R.append(loading());
   var list=d.list||[];
-  if(!top){
-    var me=d.me||{},k=Number(me.k)||0,dd=Number(me.d)||0,t=el('div','tiles');
-    [['Убийств',me.k,'k'],['Смертей',me.d,'d'],['K/D',me.kd,'r'],['EXP',me.exp,''],['Добыто',me.g,'']].forEach(function(a){
+  if(want!=='top'){
+    var t=el('div','tiles');
+    [['Убийств',me.k,'k'],['Смертей',me.d,'d'],['EXP',me.exp,''],['Добыто',me.g,'']].forEach(function(a){
       var c=el('div','tile '+a[2]),nb=el('b','',num(a[1]));
-      c.append(el('small','',a[0]),nb);
-      if(a[2]==='r'){
-        var rb=el('div','rb'),fi=el('i'),w=(k+dd)?Math.round(k/(k+dd)*100):50;
-        rb.append(fi);c.append(rb);
-        requestAnimationFrame(function(){requestAnimationFrame(function(){fi.style.width=w+'%'})});
-      }
-      t.append(c);countUp(nb,a[1]);
+      c.append(el('small','',a[0]),nb);t.append(c);countUp(nb,a[1]);
     });
-    box.append(t);
-    var s=el('div','row seg');
-    [['res','Ресурсы'],['craft','Крафт'],['history','Убийства / Смерти']].forEach(function(p){
-      s.append(btn(p[1],S.sub===p[0]?'on':'',function(){go('me',p[0])}))});
-    box.append(s);
+    R.append(t);
   }
   if(want==='res'||want==='craft'){
     var max=1;list.forEach(function(x){if(x.v>max)max=x.v});
     var g=el('div','rg');
-    slice(list,10).forEach(function(x){
+    slice(list,8).forEach(function(x){
       var c=el('div','rw'),f=el('div','f'),pc=Math.max(2,Math.round(x.v/max*100));
       c.append(f,icon(x.id!=null?x.id:x.n),el('div','w',title(x)),el('em','',num(x.v)));
       g.append(c);
       requestAnimationFrame(function(){requestAnimationFrame(function(){f.style.width=pc+'%'})});
     });
-    box.append(list.length?g:emptyMsg('Пока пусто'),pager(list.length,10));
+    R.append(list.length?g:emptyMsg('Пока пусто'),pager(list.length,8));
   }else if(want==='history'){
     var hs=el('div','hs');
     slice(list,6).forEach(function(x){
@@ -542,7 +567,7 @@ function vStat(box){
       }
       hs.append(r2);
     });
-    box.append(list.length?hs:emptyMsg('Пока пусто'),pager(list.length,6));
+    R.append(list.length?hs:emptyMsg('Пока пусто'),pager(list.length,6));
   }else{
     var tb=el('div','tb'),h=el('div','tr h'),rows=el('div','tbr');
     ['#','Игрок','Убийств','Смертей','Добыто','K/D'].forEach(function(t2,i){h.append(el('span',i>1?'c':'',t2))});
@@ -553,7 +578,7 @@ function vStat(box){
       rows.append(r3);
     });
     tb.append(h,rows);
-    box.append(list.length?tb:emptyMsg('Пока пусто'),pager(list.length,8));
+    R.append(list.length?tb:emptyMsg('Пока пусто'),pager(list.length,8));
   }
 }
 
