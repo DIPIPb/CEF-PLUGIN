@@ -103,6 +103,8 @@ body.demo #app{background:#1c1c1c}
 .hl{display:flex;gap:18px;flex:none;font-size:12px;font-weight:700;padding-bottom:4px}
 .hl span{display:flex;align-items:center;gap:6px}
 .hl span:before{content:"";width:14px;height:14px;border-radius:50%;background:var(--c)}
+.hm{padding-left:0!important;padding-right:0!important;padding-bottom:0!important}
+.hm>.hn,.hm>.hb,.hm>.hl{margin-left:16px;margin-right:16px}
 .soc{flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .sc{--c:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:0;padding:0;background:var(--in);text-decoration:none}
 .sc svg{width:min(88px,38%);max-height:46%;fill:currentColor;color:rgba(255,255,255,.8);transition:color .25s var(--ease),transform .25s var(--ease)}
@@ -417,7 +419,7 @@ function drawNav(){
 /* одинаковая высота строк: квадрат иконки всегда равен высоте плитки */
 function sizeNav(){
   var n=$('#nav'),c=n.children.length;if(!c||!n.clientHeight)return;
-  var h=Math.max(24,Math.min(60,(n.clientHeight-(c-1)*6)/c));   /* без округления вниз - иначе снизу остаётся зазор и низ кнопок не совпадает с низом панели */
+  var h=Math.max(24,Math.min(60,Math.floor((n.clientHeight-(c-1)*6)/c)));
   n.style.setProperty('--rh',h+'px');
 }
 addEventListener('resize',sizeNav);
@@ -462,7 +464,7 @@ function countUp(n,v){
 }
 function drawMain(){drawMain0();animateIn($('#body'))}
 function drawMain0(){
-  stopCap();var box=$('#body');box.textContent='';chips();
+  stopCap();var box=$('#body');box.textContent='';box.className='';chips();
   var id=S.active,cur=null;
   S.items.forEach(function(it){if(it.id===id)cur=it});
   if(S.empty[id])return box.append(emptyMsg('Раздел пока недоступен','Загляните сюда позже'));
@@ -499,6 +501,7 @@ function updHome(d){
 function vHome(box){
   var d=S.d['dip.home'];
   if(!d)return box.append(loading());
+  box.className='hm';
   var nm=d.name||HOME_NAME;
   box.append(el('div','hn',nm));
   var bar=el('div','hb');
